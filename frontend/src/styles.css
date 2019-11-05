@@ -1,0 +1,60 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~quill/dist/quill.snow.css';
+@import '~quill-mention/src/quill.mention.css';
+@import 'https://unpkg.com/quill-better-table@1.2.4/dist/quill-better-table.css';
+@import 'https://unpkg.com/quill-table-ui@1.0.5/dist/index.css';
+
+quill-editor {
+    display: block;
+    height: 300px;
+  }
+  .custom-cursor{
+    position: relative;
+    width: 10px;
+    height:10px;
+    background-color: aqua;
+    color: black;
+  }
+  .ql-editor:focus {
+    border: 1px solid #80bdff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+  }
+  
+  .ng-invalid {
+    border: 1px dashed red;
+  }
+  
+  /* Set dropdown font-families */
+  
+  [quill-editor-toolbar] .ql-font span[data-label="Aref Ruqaa"]::before {
+    font-family: "Aref Ruqaa";
+  }
+  
+  [quill-editor-toolbar] .ql-font span[data-label="Mirza"]::before {
+    font-family: "Mirza";
+  }
+  
+  [quill-editor-toolbar] .ql-font span[data-label="Roboto"]::before {
+    font-family: "Roboto";
+  }
+  
+  /* Set content font-families */
+  
+  .ql-font-mirza {
+    font-family: "Mirza";
+  }
+  
+  .ql-font-aref {
+    font-family: "Aref Ruqaa";
+  }
+  
+  .ql-font-roboto {
+    font-family: "Roboto";
+  }
+  
+  pre {
+    background-color: #fcfcfc;
+    padding: 5px;
+    border: 1px solid #b2b2b2;
+    color: #363030;
+  }
