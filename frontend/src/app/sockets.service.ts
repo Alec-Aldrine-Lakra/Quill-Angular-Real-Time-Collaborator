@@ -13,7 +13,7 @@ export class SocketsService {
     this.sharedb = require('sharedb/lib/client');
     this.sharedb.types.register(require('rich-text').type);
     // Open WebSocket connection to ShareDB server
-    this.socket = new WebSocket('ws://localhost:8080');
+    this.socket = new WebSocket('ws://localhost:8080/sharedb');
     this.connection = new this.sharedb.Connection(this.socket);
     this.doc = this.connection.get('examples', 'richtext');
   }

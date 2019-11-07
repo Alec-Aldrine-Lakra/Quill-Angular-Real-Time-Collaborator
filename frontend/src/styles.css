@@ -58,3 +58,11 @@ quill-editor {
     border: 1px solid #b2b2b2;
     color: #363030;
   }
+  .ql-tooltip::before {
+    display: none !important;  
+  }
+  .ql-tooltip{
+    padding: 1px 3px !important;
+    background-color: brown !important;
+    color: white !important;
+  }
