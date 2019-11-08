@@ -13,7 +13,6 @@ export class RegisterComponent implements OnInit {
   private password: string;
   private fname:string;
   private lname:string;
-  private url = 'http://localhost:8080/register';
   constructor(private router: Router, private auth: AuthService) {
     
   }
@@ -25,13 +24,12 @@ export class RegisterComponent implements OnInit {
 
     let fname = this.fname, lname = this.lname, email = this.email, password = this.password;
     if(email!='' && password!=''){
-       this.auth.loginUser({fname, lname, email, password}).subscribe(res=>{
+       this.auth.registerUser({fname, lname, email, password}).subscribe(res=>{
          if(!res.err){    
-          this.router.navigate(['editor']);
-          localStorage.setItem('token', res.token);
+          this.router.navigate(['login']);
          }
          else
-            console.log(res);
+            alert(res.err);
        },err=>{
           console.log(err);
       })

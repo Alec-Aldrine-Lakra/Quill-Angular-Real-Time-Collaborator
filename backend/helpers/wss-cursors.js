@@ -22,12 +22,19 @@ module.exports = function(server) {
   });
 
   wss.on('connection', function(ws, req) {
-      
     ws.id = uuid();
     ws.isAlive = true;
+    console.log(`User connected at id ${ws.id}`);
 
-    ws.on('message', function(data) {
-      var connectionIndex;
+    ws.on('message', function(data) { //broadcasting cursor position to everyone expect the one sending
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN && client.id !== ws.id) {
+              client.send(data);
+            }
+        });
+    });
+     
+      /* var connectionIndex;
       data = JSON.parse(data);
 
       // If a connection id isn't still set
@@ -64,11 +71,11 @@ module.exports = function(server) {
         // Notify all sessions
         notifyConnections(data.id);
       }
-    });
+    });*/
 
     ws.on('close', function(code, reason) {
-
-      // Find connection index and remove it from hashtable
+      console.log('cursor close');
+      /* Find connection index and remove it from hashtable
       if (~(connectionIndex = _.findIndex(connections, {
           'id': ws.id
         }))) {
@@ -77,15 +84,16 @@ module.exports = function(server) {
       // Remove session from sessions hashtable
       delete sessions[ws.id];
       // Notify all connections
-      notifyConnections(ws.id);
+      notifyConnections(ws.id);*/
     });
 
     ws.on('error', function(error) {
-
+      console.log('cursor error');
+      /*
       if (~(connectionIndex = _.findIndex(connections, {
           'id': ws.id
         }))) {
-      }
+      }*/
     });
 
     ws.on('pong', function(data) {

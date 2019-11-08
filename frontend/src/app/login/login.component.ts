@@ -11,8 +11,7 @@ import {AuthService} from '../auth.service';
 export class LoginComponent implements OnInit {
   private email: String;
   private password: String;
-  private url = 'http://localhost:8080/login';
-  constructor(private http: HttpClient, private router: Router, private auth: AuthService) {
+  constructor(private router: Router, private auth: AuthService) {
     
   }
 
@@ -30,7 +29,7 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('token', res.token);
           }
           else
-            console.log(res);
+            console.log(res.err);
        },err=>{
           console.log(err);
       })

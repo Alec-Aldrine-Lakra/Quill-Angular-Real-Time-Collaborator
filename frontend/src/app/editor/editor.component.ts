@@ -2,12 +2,12 @@ import {ViewChild, Component, OnInit} from '@angular/core';
 import { QuillEditorComponent } from 'ngx-quill';
 import QuillCursors from 'quill-cursors';
 import {SocketsService} from '../sockets.service';
-import {HttpClient} from '@angular/common/http';
 import Quill from 'quill';
 import 'quill-mention';
 import jsondecoder from 'jsonwebtoken/decode.js'
-Quill.register('modules/cursors', QuillCursors);
-const Tooltip = Quill.import('ui/tooltip'); 
+Quill.register('modules/cursors', QuillCursors); 
+const socket = new SocketsService();
+const chance = require('chance').Chance();
 
 @Component({
   selector: 'app-editor',
@@ -19,21 +19,16 @@ export class EditorComponent implements OnInit{
   @ViewChild(QuillEditorComponent, { static: true })
   editor: QuillEditorComponent;
   content = '';
-  myTooltip:any;
   public modules: any;
-  private socket: any;
-  private flag = 0;
-  private http: HttpClient;
-  private uname: String;
+  private token: any;
+  private cursor: any;
+  private cursorModule: any;
   ngOnInit(){
-    this.uname = jsondecoder(localStorage.getItem('token')).name;
-    console.log(this.uname);
   }
 
   constructor()
   {
-    this.socket = new SocketsService();
-    
+    this.token = jsondecoder(localStorage.getItem('token')) || null;
     this.modules = {
       cursors: {
         transformOnTextChange: true
@@ -70,10 +65,21 @@ export class EditorComponent implements OnInit{
   }
 
   editorCreated($event){
-    this.socket.doc.subscribe((err)=>{ // Get initial value of document and subscribe to changes
+    this.cursorModule = this.editor.quillEditor.getModule('cursors');
+    this.cursor = new Cursor(this.token.uid, this.token.name);
+    socket.cursor_socket.addEventListener('message',res=>{
+      let data = JSON.parse(res.data);
+      if(localStorage.getItem(data.uid))
+          this.cursorModule.moveCursor(data.id,data.range);
+      else
+          this.cursorModule.createCursor(data.uid,data.name, data.color,data.range);
+      localStorage.setItem(data.uid, JSON.stringify(data));
+    })
+
+    socket.doc.subscribe((err)=>{ // Get initial value of document and subscribe to changes
       if(err) throw err;
-       $event.setContents(this.socket.doc.data);
-      this.socket.doc.on('op', (op, source)=>{
+       $event.setContents(socket.doc.data);
+        socket.doc.on('op', (op, source)=>{
         if (source === 'quill') return;
         $event.updateContents(op);
       });
@@ -82,22 +88,29 @@ export class EditorComponent implements OnInit{
 
   logChanged($event)
   { 
-    //console.log('hey');
     if ($event.source !== 'user') return;
-    this.socket.doc.submitOp($event.delta, {source: 'quill'});
-    if(this.myTooltip)
-      this.myTooltip.hide();
-    this.myTooltip = new Tooltip(this.editor.quillEditor);
-    this.myTooltip.root.innerHTML = this.uname;
-    //myTooltip.style.padding = '5px';
-    let s = this.editor.quillEditor.getSelection();
-    if(s){
-      let bounds = this.editor.quillEditor.getBounds(s.index);
-      console.log(bounds);
-      //this.myTooltip.root.style.top-=10;
-      this.myTooltip.show();
-      this.myTooltip.position(bounds);
-    }
-     
+    socket.doc.submitOp($event.delta, {source: 'quill'});
   }
+  selectionUpdate($event)
+  {
+    console.log('c');
+    this.cursor.updateCursor(this.editor.quillEditor.getSelection());
+  }
+}
+
+class Cursor{
+
+  private name: string;
+  private uid: string;
+  private color: string;
+  constructor(uid: string, name: string){
+    this.name = name;
+    this.uid = uid;
+    this.color = chance.color({format : 'hex'});
+  }
+
+  updateCursor(range){
+    socket.cursor_socket.send(JSON.stringify({name: this.name,uid: this.uid,color: this.color, range}))
+  }
+
 }
