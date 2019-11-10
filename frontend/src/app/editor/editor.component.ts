@@ -70,7 +70,7 @@ export class EditorComponent implements OnInit{
     socket.cursor_socket.addEventListener('message',res=>{
       let data = JSON.parse(res.data);
       if(localStorage.getItem(data.uid))
-          this.cursorModule.moveCursor(data.id,data.range);
+          this.cursorModule.moveCursor(data.uid,data.range);
       else
           this.cursorModule.createCursor(data.uid,data.name, data.color,data.range);
       localStorage.setItem(data.uid, JSON.stringify(data));
