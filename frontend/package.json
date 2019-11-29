@@ -26,6 +26,8 @@
     "quill": "^1.3.7",
     "quill-better-table": "^1.2.4",
     "quill-cursors": "^2.2.1",
+    "quill-image-compress": "^1.2.2",
+    "quill-image-resize": "^3.0.9",
     "quill-mention": "^2.1.5",
     "quill-table-ui": "^1.0.6",
     "reconnecting-websocket": "^4.2.0",

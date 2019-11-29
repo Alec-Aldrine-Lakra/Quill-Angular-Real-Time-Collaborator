@@ -1,13 +1,13 @@
 import {ViewChild, Component, OnInit} from '@angular/core';
 import { QuillEditorComponent } from 'ngx-quill';
-import QuillCursors from 'quill-cursors';
+
 import {SocketsService} from '../sockets.service';
-import Quill from 'quill';
-import 'quill-mention';
-import jsondecoder from 'jsonwebtoken/decode.js'
-Quill.register('modules/cursors', QuillCursors); 
+import jsondecoder from 'jsonwebtoken/decode.js';
+
 const socket = new SocketsService();
 const chance = require('chance').Chance();
+
+
 
 @Component({
   selector: 'app-editor',
@@ -19,7 +19,6 @@ export class EditorComponent implements OnInit{
   @ViewChild(QuillEditorComponent, { static: true })
   editor: QuillEditorComponent;
   content = '';
-  public modules: any;
   private token: any;
   private cursor: any;
   private cursorModule: any;
@@ -29,39 +28,6 @@ export class EditorComponent implements OnInit{
   constructor()
   {
     this.token = jsondecoder(localStorage.getItem('token')) || null;
-    this.modules = {
-      cursors: {
-        transformOnTextChange: true
-      },
-      mention: {
-        allowedChars: /^[A-Za-z\sÅÄÖåäö]*$/,
-        onSelect: (item, insertItem) => {
-          const editor = this.editor.quillEditor as Quill
-          insertItem(item) // necessary because quill-mention triggers changes as 'api' instead of 'user'
-          editor.insertText(editor.getLength() - 1, '', 'user')
-        },
-        source: (searchTerm, renderList) => {
-          const values = [
-            { id: 1, value: 'Alec'},
-            { id: 2, value: 'Irshad'},
-            { id: 3, value: 'Anmol'},
-            { id: 4, value: 'MunMun'},
-            { id: 5, value:'Zoya'}
-          ]
-          if (searchTerm.length === 0) {
-            renderList(values, searchTerm)
-          } else {
-            const matches = []
-            values.forEach((entry) => {
-              if (entry.value.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-                matches.push(entry)
-              }
-            })
-            renderList(matches, searchTerm)
-          }
-        }
-      }
-    }
   }
 
   editorCreated($event){
@@ -69,11 +35,11 @@ export class EditorComponent implements OnInit{
     this.cursor = new Cursor(this.token.uid, this.token.name);
     socket.cursor_socket.addEventListener('message',res=>{
       let data = JSON.parse(res.data);
-      if(localStorage.getItem(data.uid))
+      if(sessionStorage.getItem(data.uid))
           this.cursorModule.moveCursor(data.uid,data.range);
       else
           this.cursorModule.createCursor(data.uid,data.name, data.color,data.range);
-      localStorage.setItem(data.uid, JSON.stringify(data));
+      sessionStorage.setItem(data.uid, JSON.stringify(data));
     })
 
     socket.doc.subscribe((err)=>{ // Get initial value of document and subscribe to changes
@@ -93,7 +59,6 @@ export class EditorComponent implements OnInit{
   }
   selectionUpdate($event)
   {
-    console.log('c');
     this.cursor.updateCursor(this.editor.quillEditor.getSelection());
   }
 }

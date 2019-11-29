@@ -1,8 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import "~quill/dist/quill.core.css";
 @import '~quill/dist/quill.snow.css';
 @import '~quill-mention/src/quill.mention.css';
 @import 'https://unpkg.com/quill-better-table@1.2.4/dist/quill-better-table.css';
-@import 'https://unpkg.com/quill-table-ui@1.0.5/dist/index.css';
+
 
 quill-editor {
     display: block;
