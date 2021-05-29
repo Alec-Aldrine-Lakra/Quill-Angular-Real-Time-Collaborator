@@ -31,7 +31,7 @@
     "sharedb": "^1.0.0-beta",
     "sharedb-mongo": "^1.0.0-beta.9",
     "uuid": "^3.3.3",
-    "ws": "^7.2.0"
+    "ws": "^7.4.6"
   },
   "devDependencies": {
     "browserify": "^16.5.0"
